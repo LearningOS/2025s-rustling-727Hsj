@@ -24,7 +24,11 @@ fn vec_map(v: &Vec<i32>) -> Vec<i32> {
         // TODO: Do the same thing as above - but instead of mutating the
         // Vec, you can just return the new number!
         element * 2
-    }).collect()
+    }).collect()    
+    
+    // collect`方法将迭代器中的所有元素收集到一个新的`Vec<i32>`中。
+    // 这是因为`collect`方法可以根据上下文将迭代器中的元素收集到合适的集合类型中，在这里上下文表明要收集到一个`Vec<i32>`中。
+
 }
 
 #[cfg(test)]
