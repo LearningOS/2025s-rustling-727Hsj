@@ -3,7 +3,8 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
+use std::collections::HashMap;
+// 实现栈
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -31,8 +32,12 @@ impl<T> Stack<T> {
 		self.size += 1;
 	}
 	fn pop(&mut self) -> Option<T> {
-		// TODO
-		None
+        if self.is_empty(){
+            None
+        }else{
+            self.size -= 1;
+            self.data.pop()
+        }
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -46,9 +51,12 @@ impl<T> Stack<T> {
 		}
 		self.data.get_mut(self.size - 1)
 	}
+
+    
 	fn into_iter(self) -> IntoIter<T> {
 		IntoIter(self)
 	}
+    // 数组类型的不可变引用的迭代器
 	fn iter(&self) -> Iter<T> {
 		let mut iterator = Iter { 
 			stack: Vec::new() 
@@ -58,6 +66,7 @@ impl<T> Stack<T> {
 		}
 		iterator
 	}
+    // 数组类型的可变引用的迭代器
 	fn iter_mut(&mut self) -> IterMut<T> {
 		let mut iterator = IterMut { 
 			stack: Vec::new() 
@@ -68,6 +77,8 @@ impl<T> Stack<T> {
 		iterator
 	}
 }
+
+
 struct IntoIter<T>(Stack<T>);
 impl<T: Clone> Iterator for IntoIter<T> {
 	type Item = T;
@@ -80,6 +91,7 @@ impl<T: Clone> Iterator for IntoIter<T> {
 		}
 	}
 }
+
 struct Iter<'a, T: 'a> {
 	stack: Vec<&'a T>,
 }
@@ -89,6 +101,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
 		self.stack.pop()
 	}
 }
+
 struct IterMut<'a, T: 'a> {
 	stack: Vec<&'a mut T>,
 }
@@ -99,10 +112,33 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 	}
 }
 
-fn bracket_match(bracket: &str) -> bool
-{
-	//TODO
-	true
+fn bracket_match(bracket: &str) -> bool{
+	let mut stack: Stack<char> = Stack::new();
+    let table: HashMap<char, char> = HashMap::from([
+        ('}', '{'),
+        (']', '['),
+        (')', '('),
+    ]);
+    
+    for val in bracket.chars() {
+        match val {
+            '{' | '[' | '(' => stack.push(val),
+            '}' | ']' | ')' => {
+                if table.get(&val) == stack.peek(){
+                    stack.pop();
+                }else{
+                    return  false;
+                }
+            },
+            _ => (),
+        }
+    }
+
+	if stack.is_empty(){
+		true
+	}else{
+		false
+	}
 }
 
 #[cfg(test)]

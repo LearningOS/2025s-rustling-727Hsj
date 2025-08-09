@@ -2,7 +2,6 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -16,10 +15,11 @@ impl<T> Queue<T> {
         }
     }
 
+    // 入队
     pub fn enqueue(&mut self, value: T) {
         self.elements.push(value)
     }
-
+    // 出队
     pub fn dequeue(&mut self) -> Result<T, &str> {
         if !self.elements.is_empty() {
             Ok(self.elements.remove(0usize))
@@ -27,7 +27,7 @@ impl<T> Queue<T> {
             Err("Queue is empty")
         }
     }
-
+    // 队首元素
     pub fn peek(&self) -> Result<&T, &str> {
         match self.elements.first() {
             Some(value) => Ok(value),
@@ -52,9 +52,12 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
-{
+pub struct myStack<T>{
 	//TODO
+    /*
+    入栈时：先把新元素加入辅助队列，再把主队列的所有元素依次移到辅助队列，最后交换两个队列。
+    出栈时：直接从主队列出队即可（因为最后入栈的元素在队首）。
+    */
 	q1:Queue<T>,
 	q2:Queue<T>
 }
@@ -67,15 +70,38 @@ impl<T> myStack<T> {
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        // q1为辅，q2位主
+        if self.q1.size() == 0{
+            self.q1.enqueue(elem);
+            while !self.q2.is_empty() {
+                self.q1.enqueue( self.q2.dequeue().unwrap());
+            }
+        }else{
+            // q2为辅，q1位主
+            self.q2.enqueue(elem);
+            while !self.q1.is_empty() {
+                self.q2.enqueue( self.q1.dequeue().unwrap());
+            }
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        if self.is_empty(){
+            Err("Stack is empty")
+        }else{
+            if !self.q1.is_empty(){
+                Ok(self.q1.dequeue().unwrap())
+            }else {
+                Ok(self.q2.dequeue().unwrap())
+            }
+        }
     }
+
+
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+		if self.q1.is_empty() && self.q2.is_empty(){
+            return true;
+        }
+        false
     }
 }
 
