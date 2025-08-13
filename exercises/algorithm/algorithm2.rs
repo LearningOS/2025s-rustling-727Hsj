@@ -72,9 +72,29 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn reverse(&mut self){
-		// TODO
+    pub fn reverse(&mut self) where T: Copy{
+		let mut left = &self.start;
+        let mut right = &self.end;
+        let mut count = 0;
+
+        while count < self.length {
+            unsafe {
+               let temp1 = &(*left.unwrap().as_ptr()).val;
+               let temp2 = &(*right.unwrap().as_ptr()).val;
+               let t1 = *temp1;
+               let t2 = *temp2;
+                
+               (*left.unwrap().as_ptr()).val = t2;
+               (*right.unwrap().as_ptr()).val = t1;
+
+               left = &(*left.unwrap().as_ptr()).next;
+               right = &(*right.unwrap().as_mut()).prev;
+            }
+            count += 2;
+        }
 	}
+
+
 }
 
 impl<T> Display for LinkedList<T>

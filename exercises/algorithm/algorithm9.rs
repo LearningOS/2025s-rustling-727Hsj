@@ -2,24 +2,17 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
 
-pub struct Heap<T>
-where
-    T: Default,
-{
+pub struct Heap<T> where T: Default,{
     count: usize,
     items: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
 
-impl<T> Heap<T>
-where
-    T: Default,
-{
+impl<T> Heap<T> where T: Default{
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
             count: 0,
@@ -37,8 +30,46 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        // 添加在头上
+        self.items.insert(0, value);
+        self.count += 1;
+
+        // 堆排序
+        self.heap_sort(0, self.count);
+    
     }
+
+    pub fn heap_sort(&mut self, i: usize, heapsize: usize){
+        let leftson = self.left_child_idx(i);
+        let rightson = self.right_child_idx(i);
+        let mut max_or_min_idx = i;
+
+        /*
+        if (l < heapSize && a[l] > a[largest]) {
+            largest = l;
+        } 
+        if (r < heapSize && a[r] > a[largest]) {
+            largest = r;
+        }
+        if (largest != i) {
+            swap(a, i, largest);
+            maxHeapify(a, largest, heapSize);
+        } */
+
+        if leftson < self.count && (self.comparator)(&self.items[leftson], &self.items[rightson]){
+            max_or_min_idx = leftson;
+        }
+        if rightson < self.count && ((self.comparator)(&self.items[rightson],&self.items[leftson])){
+            max_or_min_idx = rightson;
+        }
+        if max_or_min_idx != i{
+            self.items.swap(i, max_or_min_idx);
+            self.heap_sort(max_or_min_idx, heapsize);
+        }
+
+    }
+
+
 
     fn parent_idx(&self, idx: usize) -> usize {
         idx / 2
@@ -56,16 +87,13 @@ where
         self.left_child_idx(idx) + 1
     }
 
-    fn smallest_child_idx(&self, idx: usize) -> usize {
+    fn smallest_child_idx(&self, idx: usize) -> usize where T: std::cmp::PartialOrd{
         //TODO
-		0
+        0
     }
 }
 
-impl<T> Heap<T>
-where
-    T: Default + Ord,
-{
+impl<T> Heap<T> where T: Default + Ord,{
     /// Create a new MinHeap
     pub fn new_min() -> Self {
         Self::new(|a, b| a < b)
@@ -77,15 +105,19 @@ where
     }
 }
 
-impl<T> Iterator for Heap<T>
-where
-    T: Default,
-{
+impl<T> Iterator for Heap<T> where T: Default, {
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        // 弹出堆顶元素并堆排序
+		if self.count > 0{
+            let ret = self.items.remove(0);
+            self.count -= 1;
+            self.heap_sort(0, self.count);
+            Some(ret)
+        }else{
+            None
+        }
     }
 }
 
