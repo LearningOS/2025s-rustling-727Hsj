@@ -2,7 +2,6 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
 
 use std::collections::{HashMap, HashSet};
 use std::fmt;
@@ -18,9 +17,7 @@ pub struct UndirectedGraph {
 }
 impl Graph for UndirectedGraph {
     fn new() -> UndirectedGraph {
-        UndirectedGraph {
-            adjacency_table: HashMap::new(),
-        }
+        UndirectedGraph { adjacency_table: HashMap::new(), }
     }
     fn adjacency_table_mutable(&mut self) -> &mut HashMap<String, Vec<(String, i32)>> {
         &mut self.adjacency_table
@@ -29,7 +26,25 @@ impl Graph for UndirectedGraph {
         &self.adjacency_table
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
+        if !self.adjacency_table.contains_key(edge.0){
+            self.add_node(edge.0);
+        }
+        if !self.adjacency_table.contains_key(edge.1){
+            self.add_node(edge.1);
+        }
+
+        if let Some(arrays) = self.adjacency_table_mutable().get_mut(edge.0){
+            arrays.push((edge.1.to_string(), edge.2));
+        }
+        if let Some(arrays) = self.adjacency_table_mutable().get_mut(edge.1){
+            arrays.push((edge.0.to_string(), edge.2));
+        }
+    }
+
+    fn add_node(&mut self, node: &str) -> bool {
         //TODO
+        self.adjacency_table_mutable().insert(node.to_string(), Vec::new());
+		true
     }
 }
 pub trait Graph {
@@ -59,6 +74,8 @@ pub trait Graph {
         edges
     }
 }
+
+
 #[cfg(test)]
 mod test_undirected_graph {
     use super::Graph;
