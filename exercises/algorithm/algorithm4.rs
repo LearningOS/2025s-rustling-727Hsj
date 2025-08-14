@@ -3,33 +3,23 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
 
 #[derive(Debug)]
-struct TreeNode<T>
-where
-    T: Ord,
-{
+struct TreeNode<T> where T: Ord, {
     value: T,
     left: Option<Box<TreeNode<T>>>,
     right: Option<Box<TreeNode<T>>>,
 }
 
 #[derive(Debug)]
-struct BinarySearchTree<T>
-where
-    T: Ord,
-{
+struct BinarySearchTree<T> where T: Ord, {
     root: Option<Box<TreeNode<T>>>,
 }
 
-impl<T> TreeNode<T>
-where
-    T: Ord,
-{
+impl<T> TreeNode<T> where T: Ord, {
     fn new(value: T) -> Self {
         TreeNode {
             value,
@@ -39,36 +29,80 @@ where
     }
 }
 
-impl<T> BinarySearchTree<T>
-where
-    T: Ord,
-{
-
+impl<T> BinarySearchTree<T> where T: Ord, {
     fn new() -> Self {
         BinarySearchTree { root: None }
     }
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        
+        let node: TreeNode<T> = TreeNode::new(value);
+        // 如果root=None，第一个节点做根节点
+        if let None = self.root{
+            self.root = Some(Box::new(node));  
+            return;
+        };
+        // 如果有根节点
+        let mut current = &mut self.root;
+        while let Some(bbooxx) = current {
+            // 去左边
+            if bbooxx.value > node.value{
+                if let None = bbooxx.left{
+                    (**bbooxx).left = Some(Box::new(node));
+                    return;
+                };
+                current = &mut bbooxx.left;
+                
+            }else if bbooxx.value < node.value{
+                if let None = bbooxx.right{
+                    (**bbooxx).right = Some(Box::new(node));
+                    return;
+                };
+                current = &mut bbooxx.right;
+            }else{
+                return;
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
+        // 如果root=None
+        if let None = self.root{
+            return false;
+        };
+        // 如果有根节点
+        let mut current = & self.root;
+        while let Some(bbooxx) = current {
+            // 去左边
+            if bbooxx.value > value{
+                if let None = bbooxx.left{
+                    return false;
+                };
+                current = & bbooxx.left;
+
+            }else if bbooxx.value < value{
+                if let None = bbooxx.right{
+                    return false;
+                };
+                current = & bbooxx.right;
+            }else if bbooxx.value == value{
+                return true;
+            }
+        }
         true
     }
 }
 
-impl<T> TreeNode<T>
-where
-    T: Ord,
-{
+impl<T> TreeNode<T> where T: Ord, {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
     }
 }
+
+
 
 
 #[cfg(test)]
